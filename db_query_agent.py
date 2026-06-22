@@ -10,11 +10,13 @@ import sqlite3
 import pandas as pd
 import json
 from langgraph.prebuilt import ToolNode,tools_condition
+import os
 load_dotenv()
 class State(TypedDict):
     messages: Annotated[list,add_messages]
-llm=init_chat_model("llama-3.3-70b-versatile",model_provider="groq")
-conn = sqlite3.connect("mimic.db")
+llm = init_chat_model("openai/gpt-oss-120b", model_provider="groq", temperature=0)
+DB_PATH = os.path.join("data", "mimic.db")
+
 SYSTEM_PROMPT = SystemMessage(content="""
 You are ClinIQ, an expert clinical data analyst with deep knowledge of the MIMIC III database schema.
 Your job is to answer natural language questions about patient data by generating and executing accurate SQL queries.
@@ -107,7 +109,7 @@ def execute_sql(query: str) -> str:
     
     if "limit" not in query.lower():
         query = query.rstrip(";") + " LIMIT 100;"
-    
+    conn = sqlite3.connect(DB_PATH)
     try:
         df = pd.read_sql_query(query, conn)
         
@@ -122,6 +124,8 @@ def execute_sql(query: str) -> str:
     
     except Exception as e:
         return f"SQL Error: {str(e)}\nCheck column names using get_schema and try again."
+    finally:
+        conn.close()
 
 tools=[get_schema,execute_sql]
 llm_with_tools = llm.bind_tools(tools, tool_choice="auto")
@@ -143,4 +147,10 @@ question = "What is the gender distribution of patients?"
 response = graph.invoke({
     "messages": [SYSTEM_PROMPT, {"role": "user", "content": question}]
 })
-print(response['messages'][-1].content)
+for i, msg in enumerate(response['messages']):
+    print(f"\n[{i}] {type(msg).__name__}")
+    print("  content:", repr(getattr(msg, 'content', None))[:300])
+    if hasattr(msg, 'tool_calls') and msg.tool_calls:
+        print("  tool_calls:", msg.tool_calls)
+    if hasattr(msg, 'tool_call_id'):
+        print("  tool_call_id:", msg.tool_call_id)
