@@ -1,0 +1,79 @@
+[
+  {
+    "id": "q01",
+    "question": "What is the gender distribution of patients?",
+    "reference_sql": "SELECT gender, COUNT(*) AS count FROM patients GROUP BY gender;",
+    "ground_truth": "The results are: (gender=F, count=43); (gender=M, count=57)",
+    "sql_executed": true
+  },
+  {
+    "id": "q02",
+    "question": "What is the average age of patients?",
+    "reference_sql": "SELECT AVG(anchor_age) AS avg_age FROM patients;",
+    "ground_truth": "The result is 61.75 (avg_age).",
+    "sql_executed": true
+  },
+  {
+    "id": "q03",
+    "question": "How many patients have died (have a date of death recorded)?",
+    "reference_sql": "SELECT COUNT(*) AS deceased_count FROM patients WHERE dod IS NOT NULL;",
+    "ground_truth": "The result is 31 (deceased_count).",
+    "sql_executed": true
+  },
+  {
+    "id": "q04",
+    "question": "How many hospital admissions were emergency admissions?",
+    "reference_sql": "SELECT COUNT(*) AS emergency_count FROM admissions WHERE admission_type LIKE '%EMER%';",
+    "ground_truth": "The result is 119 (emergency_count).",
+    "sql_executed": true
+  },
+  {
+    "id": "q05",
+    "question": "What is the breakdown of admissions by insurance type?",
+    "reference_sql": "SELECT insurance, COUNT(*) AS count FROM admissions GROUP BY insurance ORDER BY count DESC;",
+    "ground_truth": "The results are: (insurance=Other, count=149); (insurance=Medicare, count=104); (insurance=Medicaid, count=22)",
+    "sql_executed": true
+  },
+  {
+    "id": "q06",
+    "question": "How many patients died during their hospital admission?",
+    "reference_sql": "SELECT COUNT(*) AS in_hospital_deaths FROM admissions WHERE hospital_expire_flag = 1;",
+    "ground_truth": "The result is 15 (in_hospital_deaths).",
+    "sql_executed": true
+  },
+  {
+    "id": "q07",
+    "question": "What is the average length of stay in days for hospital admissions?",
+    "reference_sql": "SELECT AVG(julianday(dischtime) - julianday(admittime)) AS avg_los_days FROM admissions WHERE dischtime IS NOT NULL AND admittime IS NOT NULL;",
+    "ground_truth": "The result is 6.88 (avg_los_days).",
+    "sql_executed": true
+  },
+  {
+    "id": "q08",
+    "question": "What is the average age of patients admitted as an emergency?",
+    "reference_sql": "SELECT AVG(p.anchor_age) AS avg_age FROM patients p JOIN admissions a ON p.subject_id = a.subject_id WHERE a.admission_type LIKE '%EMER%';",
+    "ground_truth": "The result is 61.51 (avg_age).",
+    "sql_executed": true
+  },
+  {
+    "id": "q09",
+    "question": "What are the 5 most frequently recorded diagnosis codes?",
+    "reference_sql": "SELECT icd_code, COUNT(*) AS frequency FROM diagnoses_icd GROUP BY icd_code ORDER BY frequency DESC LIMIT 5;",
+    "ground_truth": "The results are: (icd_code=4019, frequency=68); (icd_code=E785, frequency=57); (icd_code=2724, frequency=55); (icd_code=E039, frequency=47); (icd_code=Z794, frequency=37)",
+    "sql_executed": true
+  },
+  {
+    "id": "q10",
+    "question": "How many distinct patients have at least one recorded diagnosis?",
+    "reference_sql": "SELECT COUNT(DISTINCT subject_id) AS patients_with_diagnosis FROM diagnoses_icd;",
+    "ground_truth": "The result is 100 (patients_with_diagnosis).",
+    "sql_executed": true
+  },
+  {
+    "id": "q18",
+    "question": "What is the average BMI of patients in the ICU?",
+    "reference_sql": null,
+    "ground_truth": "This question cannot be answered with the currently available tables, since no table containing patient height or weight measurements is defined in the schema.",
+    "sql_executed": false
+  }
+]
