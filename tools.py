@@ -14,7 +14,7 @@ EMBED_MODEL_NAME = "all-MiniLM-L6-v2"
 
 @lru_cache(maxsize=1)
 def _get_embedder() -> SentenceTransformer:
-    return SentenceTransformer(EMBED_MODEL_NAME)
+    return SentenceTransformer(EMBED_MODEL_NAME,cache_folder='/opt/ml/model')
 
 
 @lru_cache(maxsize=1)
