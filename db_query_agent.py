@@ -6,9 +6,7 @@ from langgraph.graph.message import add_messages
 from langchain.chat_models import init_chat_model
 from langchain_core.tools import tool
 from langchain_core.messages import SystemMessage
-import sqlite3
-import pandas as pd
-import json
+from tools import TOOLS
 from langgraph.prebuilt import ToolNode,tools_condition
 import os
 load_dotenv()
@@ -41,99 +39,13 @@ Your job is to answer natural language questions about patient data by generatin
 ## Available tables:
 patients, admissions, diagnoses_icd
 """)
-@tool
-def get_schema(table_names: list[str]) -> str:
-    """
-    Returns column names and types for the requested MIMIC tables.
-    Call this before writing any SQL query.
-    """
-    schema = {
-        "patients": [
-            ("subject_id", "INTEGER"),
-            ("gender", "TEXT"),
-            ("anchor_age", "INTEGER"),
-            ("anchor_year", "INTEGER"),
-            ("anchor_year_group", "TEXT"),
-            ("dod", "TEXT"),
-        ],
-        "admissions": [
-            ("hadm_id", "INTEGER"),
-            ("subject_id", "INTEGER"),
-            ("admittime", "TEXT"),
-            ("dischtime", "TEXT"),
-            ("deathtime", "TEXT"),
-            ("admission_type", "TEXT"),
-            ("admit_provider_id", "TEXT"),
-            ("admission_location", "TEXT"),
-            ("discharge_location", "TEXT"),
-            ("insurance", "TEXT"),
-            ("language", "TEXT"),
-            ("marital_status", "TEXT"),
-            ("race", "TEXT"),
-            ("edregtime", "TEXT"),
-            ("edouttime", "TEXT"),
-            ("hospital_expire_flag", "INTEGER")
-        ],
-        "diagnoses_icd": [
-            ("subject_id", "INTEGER"),
-            ("hadm_id", "INTEGER"),
-            ("icd_code", "TEXT"),
-            ("seq_num", "INTEGER"),
-            ("icd_version", "INTEGER")
-        ],
-        # ... etc
-    }
 
-    result = []
-    for table in table_names:
-        if table in schema:
-            cols = ", ".join(f"{col} ({dtype})" for col, dtype in schema[table])
-            result.append(f"Table `{table}`: {cols}")
-        else:
-            result.append(f"Table `{table}`: not found")
-    
-    return "\n".join(result)
-def is_safe_query(query: str) -> bool:
-    forbidden = ["drop", "delete", "insert", "update", "alter", "truncate"]
-    query_lower = query.lower().strip()
-    return not any(word in query_lower for word in forbidden)
-@tool
-def execute_sql(query: str) -> str:
-    """
-    Execute a read-only SQL query against the MIMIC database.
-    Returns columns, row count, and up to 20 rows of results.
-    Always call get_schema first to ensure correct column names.
-    """
-    if not is_safe_query(query):
-        return "Error: Only SELECT queries are permitted."
-    
-    if "limit" not in query.lower():
-        query = query.rstrip(";") + " LIMIT 100;"
-    conn = sqlite3.connect(DB_PATH)
-    try:
-        df = pd.read_sql_query(query, conn)
-        
-        if df.empty:
-            return json.dumps({"row_count": 0, "message": "No results returned. The query may be too restrictive or reference wrong values."})
-        
-        return json.dumps({
-            "row_count": len(df),
-            "columns": list(df.columns),
-            "data": df.head(20).to_dict(orient="records")
-        }, indent=2, default=str)
-    
-    except Exception as e:
-        return f"SQL Error: {str(e)}\nCheck column names using get_schema and try again."
-    finally:
-        conn.close()
-
-tools=[get_schema,execute_sql]
-llm_with_tools = llm.bind_tools(tools, tool_choice="auto")
+llm_with_tools = llm.bind_tools(TOOLS, tool_choice="auto")
 def chatbot(state: State) -> State:
     return {"messages":[llm_with_tools.invoke(state['messages'])]}
 builder=StateGraph(State)
 builder.add_node("chatbot_node",chatbot)
-builder.add_node("tools",ToolNode(tools))
+builder.add_node("tools",ToolNode(TOOLS))
 builder.add_edge(START,"chatbot_node")
 builder.add_conditional_edges("chatbot_node",tools_condition)
 builder.add_edge("tools","chatbot_node")
