@@ -1,8 +1,7 @@
 """
 lambda_handler.py
 
-Entry point AWS Lambda invokes. Wraps the existing db_query_agent.py graph — no changes
-needed to db_query_agent.py, tools.py, or schema_metadata.py.
+Entry point AWS Lambda invokes. Wraps the existing db_query_agent.py graph
 
 API Gateway (HTTP API, Lambda proxy integration) invokes this with an `event`
 dict containing the HTTP request; we extract the question, run the graph, and
@@ -13,9 +12,7 @@ DB_PATH note: tools.py currently does:
 This is a RELATIVE path. Lambda's container working directory is /var/task
 (where your deployment image's WORKDIR lands), so as long as the Dockerfile
 COPYs data/mimic.db to /var/task/data/mimic.db, this relative path resolves
-correctly with ZERO code change in tools.py. This is exactly the "minimal
-changes" approach — verify this once locally with the container running, see
-Step 4 below.
+correctly with ZERO code change in tools.py. 
 """
 
 import json

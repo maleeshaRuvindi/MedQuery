@@ -2,7 +2,6 @@ import sqlite3
 import pandas as pd
 import json
 from langchain_core.tools import tool
-from schema_metadata import TABLES_BY_NAME
 import os
 from sentence_transformers import SentenceTransformer
 from pinecone import Pinecone
@@ -60,24 +59,28 @@ def execute_sql(query: str) -> str:
         return f"SQL Error: {str(e)}\nCheck column names using get_schema and try again."
     finally:
         conn.close()
-
+def load_schemas(path='schemas.json'):
+    with open(path, 'r') as f:
+        return json.load(f)
 @tool
 def get_schema(table_names: list[str]) -> str:
     """
     Returns exact column names and types for the requested MIMIC tables.
-    Call this AFTER search_schema has identified candidate table names, and
-    BEFORE writing any SQL query, to confirm exact column names exist.
+    Call this BEFORE writing any SQL query, to confirm exact column names exist.
     """
-    result = []
-    for name in table_names:
-        table = TABLES_BY_NAME.get(name)
-        if table is None:
-            result.append(f"Table `{name}`: not found. Use search_schema to find the correct table name.")
-            continue
-        cols = ", ".join(f"{c.name} ({c.dtype})" for c in table.columns)
-        result.append(f"Table `{table.name}`: {cols}\n  Notes: {table.join_hints}")
+    all_schemas=load_schemas()
+    ddl = ""
+    for table in table_names:
+        if table in all_schemas:
+            ddl += f"CREATE TABLE {table} (\n"
+            col_lines = [
+                f"    {col['column_name']}  {col['column_type']}"
+                for col in all_schemas[table]
+            ]
+            ddl += ",\n".join(col_lines)
+            ddl += "\n);\n\n"
+    return ddl
 
-    return "\n".join(result)
 @tool
 def search_schema(query: str, top_k: int = 5) -> str:
     """
@@ -135,4 +138,4 @@ def search_schema(query: str, top_k: int = 5) -> str:
         output.append(entry)
 
     return json.dumps({"candidates": output}, indent=2)
-TOOLS = [search_schema, get_schema, execute_sql]
+TOOLS = [get_schema, execute_sql]

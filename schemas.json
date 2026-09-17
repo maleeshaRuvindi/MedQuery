@@ -1,0 +1,962 @@
+{
+  "admissions": [
+    {
+      "column_name": "subject_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "hadm_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "admittime",
+      "column_type": "TIMESTAMP"
+    },
+    {
+      "column_name": "dischtime",
+      "column_type": "TIMESTAMP"
+    },
+    {
+      "column_name": "deathtime",
+      "column_type": "TIMESTAMP"
+    },
+    {
+      "column_name": "admission_type",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "admit_provider_id",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "admission_location",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "discharge_location",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "insurance",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "language",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "marital_status",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "race",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "edregtime",
+      "column_type": "TIMESTAMP"
+    },
+    {
+      "column_name": "edouttime",
+      "column_type": "TIMESTAMP"
+    },
+    {
+      "column_name": "hospital_expire_flag",
+      "column_type": "BIGINT"
+    }
+  ],
+  "diagnoses_icd": [
+    {
+      "column_name": "subject_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "hadm_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "seq_num",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "icd_code",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "icd_version",
+      "column_type": "BIGINT"
+    }
+  ],
+  "drgcodes": [
+    {
+      "column_name": "subject_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "hadm_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "drg_type",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "drg_code",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "description",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "drg_severity",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "drg_mortality",
+      "column_type": "BIGINT"
+    }
+  ],
+  "d_hcpcs": [
+    {
+      "column_name": "code",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "category",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "long_description",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "short_description",
+      "column_type": "VARCHAR"
+    }
+  ],
+  "d_icd_diagnoses": [
+    {
+      "column_name": "icd_code",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "icd_version",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "long_title",
+      "column_type": "VARCHAR"
+    }
+  ],
+  "d_icd_procedures": [
+    {
+      "column_name": "icd_code",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "icd_version",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "long_title",
+      "column_type": "VARCHAR"
+    }
+  ],
+  "d_labitems": [
+    {
+      "column_name": "itemid",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "label",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "fluid",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "category",
+      "column_type": "VARCHAR"
+    }
+  ],
+  "emar": [
+    {
+      "column_name": "subject_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "hadm_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "emar_id",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "emar_seq",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "poe_id",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "pharmacy_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "enter_provider_id",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "charttime",
+      "column_type": "TIMESTAMP"
+    },
+    {
+      "column_name": "medication",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "event_txt",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "scheduletime",
+      "column_type": "TIMESTAMP"
+    },
+    {
+      "column_name": "storetime",
+      "column_type": "TIMESTAMP"
+    }
+  ],
+  "emar_detail": [
+    {
+      "column_name": "subject_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "emar_id",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "emar_seq",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "parent_field_ordinal",
+      "column_type": "DOUBLE"
+    },
+    {
+      "column_name": "administration_type",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "pharmacy_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "barcode_type",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "reason_for_no_barcode",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "complete_dose_not_given",
+      "column_type": "BOOLEAN"
+    },
+    {
+      "column_name": "dose_due",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "dose_due_unit",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "dose_given",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "dose_given_unit",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "will_remainder_of_dose_be_given",
+      "column_type": "BOOLEAN"
+    },
+    {
+      "column_name": "product_amount_given",
+      "column_type": "DOUBLE"
+    },
+    {
+      "column_name": "product_unit",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "product_code",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "product_description",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "product_description_other",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "prior_infusion_rate",
+      "column_type": "DOUBLE"
+    },
+    {
+      "column_name": "infusion_rate",
+      "column_type": "DOUBLE"
+    },
+    {
+      "column_name": "infusion_rate_adjustment",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "infusion_rate_adjustment_amount",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "infusion_rate_unit",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "route",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "infusion_complete",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "completion_interval",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "new_iv_bag_hung",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "continued_infusion_in_other_location",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "restart_interval",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "side",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "site",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "non_formulary_visual_verification",
+      "column_type": "VARCHAR"
+    }
+  ],
+  "hcpcsevents": [
+    {
+      "column_name": "subject_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "hadm_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "chartdate",
+      "column_type": "DATE"
+    },
+    {
+      "column_name": "hcpcs_cd",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "seq_num",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "short_description",
+      "column_type": "VARCHAR"
+    }
+  ],
+  "labevents": [
+    {
+      "column_name": "labevent_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "subject_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "hadm_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "specimen_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "itemid",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "order_provider_id",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "charttime",
+      "column_type": "TIMESTAMP"
+    },
+    {
+      "column_name": "storetime",
+      "column_type": "TIMESTAMP"
+    },
+    {
+      "column_name": "value",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "valuenum",
+      "column_type": "DOUBLE"
+    },
+    {
+      "column_name": "valueuom",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "ref_range_lower",
+      "column_type": "DOUBLE"
+    },
+    {
+      "column_name": "ref_range_upper",
+      "column_type": "DOUBLE"
+    },
+    {
+      "column_name": "flag",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "priority",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "comments",
+      "column_type": "VARCHAR"
+    }
+  ],
+  "microbiologyevents": [
+    {
+      "column_name": "microevent_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "subject_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "hadm_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "micro_specimen_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "order_provider_id",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "chartdate",
+      "column_type": "TIMESTAMP"
+    },
+    {
+      "column_name": "charttime",
+      "column_type": "TIMESTAMP"
+    },
+    {
+      "column_name": "spec_itemid",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "spec_type_desc",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "test_seq",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "storedate",
+      "column_type": "TIMESTAMP"
+    },
+    {
+      "column_name": "storetime",
+      "column_type": "TIMESTAMP"
+    },
+    {
+      "column_name": "test_itemid",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "test_name",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "org_itemid",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "org_name",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "isolate_num",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "quantity",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "ab_itemid",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "ab_name",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "dilution_text",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "dilution_comparison",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "dilution_value",
+      "column_type": "DOUBLE"
+    },
+    {
+      "column_name": "interpretation",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "comments",
+      "column_type": "VARCHAR"
+    }
+  ],
+  "omr": [
+    {
+      "column_name": "subject_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "chartdate",
+      "column_type": "DATE"
+    },
+    {
+      "column_name": "seq_num",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "result_name",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "result_value",
+      "column_type": "VARCHAR"
+    }
+  ],
+  "patients": [
+    {
+      "column_name": "subject_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "gender",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "anchor_age",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "anchor_year",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "anchor_year_group",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "dod",
+      "column_type": "DATE"
+    }
+  ],
+  "pharmacy": [
+    {
+      "column_name": "subject_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "hadm_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "pharmacy_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "poe_id",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "starttime",
+      "column_type": "TIMESTAMP"
+    },
+    {
+      "column_name": "stoptime",
+      "column_type": "TIMESTAMP"
+    },
+    {
+      "column_name": "medication",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "proc_type",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "status",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "entertime",
+      "column_type": "TIMESTAMP"
+    },
+    {
+      "column_name": "verifiedtime",
+      "column_type": "TIMESTAMP"
+    },
+    {
+      "column_name": "route",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "frequency",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "disp_sched",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "infusion_type",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "sliding_scale",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "lockout_interval",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "basal_rate",
+      "column_type": "DOUBLE"
+    },
+    {
+      "column_name": "one_hr_max",
+      "column_type": "DOUBLE"
+    },
+    {
+      "column_name": "doses_per_24_hrs",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "duration",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "duration_interval",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "expiration_value",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "expiration_unit",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "expirationdate",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "dispensation",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "fill_quantity",
+      "column_type": "VARCHAR"
+    }
+  ],
+  "poe": [
+    {
+      "column_name": "poe_id",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "poe_seq",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "subject_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "hadm_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "ordertime",
+      "column_type": "TIMESTAMP"
+    },
+    {
+      "column_name": "order_type",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "order_subtype",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "transaction_type",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "discontinue_of_poe_id",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "discontinued_by_poe_id",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "order_provider_id",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "order_status",
+      "column_type": "VARCHAR"
+    }
+  ],
+  "poe_detail": [
+    {
+      "column_name": "poe_id",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "poe_seq",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "subject_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "field_name",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "field_value",
+      "column_type": "VARCHAR"
+    }
+  ],
+  "prescriptions": [
+    {
+      "column_name": "subject_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "hadm_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "pharmacy_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "poe_id",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "poe_seq",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "order_provider_id",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "starttime",
+      "column_type": "TIMESTAMP"
+    },
+    {
+      "column_name": "stoptime",
+      "column_type": "TIMESTAMP"
+    },
+    {
+      "column_name": "drug_type",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "drug",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "formulary_drug_cd",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "gsn",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "ndc",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "prod_strength",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "form_rx",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "dose_val_rx",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "dose_unit_rx",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "form_val_disp",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "form_unit_disp",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "doses_per_24_hrs",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "route",
+      "column_type": "VARCHAR"
+    }
+  ],
+  "procedures_icd": [
+    {
+      "column_name": "subject_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "hadm_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "seq_num",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "chartdate",
+      "column_type": "DATE"
+    },
+    {
+      "column_name": "icd_code",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "icd_version",
+      "column_type": "BIGINT"
+    }
+  ],
+  "provider": [
+    {
+      "column_name": "provider_id",
+      "column_type": "VARCHAR"
+    }
+  ],
+  "services": [
+    {
+      "column_name": "subject_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "hadm_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "transfertime",
+      "column_type": "TIMESTAMP"
+    },
+    {
+      "column_name": "prev_service",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "curr_service",
+      "column_type": "VARCHAR"
+    }
+  ],
+  "transfers": [
+    {
+      "column_name": "subject_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "hadm_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "transfer_id",
+      "column_type": "BIGINT"
+    },
+    {
+      "column_name": "eventtype",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "careunit",
+      "column_type": "VARCHAR"
+    },
+    {
+      "column_name": "intime",
+      "column_type": "TIMESTAMP"
+    },
+    {
+      "column_name": "outtime",
+      "column_type": "TIMESTAMP"
+    }
+  ]
+}

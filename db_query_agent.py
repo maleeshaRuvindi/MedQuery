@@ -9,13 +9,16 @@ from langchain_core.messages import SystemMessage
 from tools import TOOLS
 from langgraph.prebuilt import ToolNode,tools_condition
 import os
+import json
 load_dotenv()
 class State(TypedDict):
     messages: Annotated[list,add_messages]
 llm = init_chat_model("openai/gpt-oss-120b", model_provider="groq", temperature=0)
 DB_PATH = os.path.join("data", "mimic.db")
 
-SYSTEM_PROMPT = SystemMessage(content="""
+table_names=['admissions', 'diagnoses_icd', 'drgcodes', 'd_hcpcs', 'd_icd_diagnoses', 'd_icd_procedures', 'd_labitems', 'emar', 'emar_detail', 'hcpcsevents', 'labevents', 'microbiologyevents', 'omr', 'patients', 'pharmacy', 'poe', 'poe_detail', 'prescriptions', 'procedures_icd', 'provider', 'services', 'transfers']
+
+SYSTEM_PROMPT = SystemMessage(content=f"""
 You are ClinIQ, an expert clinical data analyst with deep knowledge of the MIMIC III database schema.
 Your job is to answer natural language questions about patient data by generating and executing accurate SQL queries.
 
@@ -37,7 +40,7 @@ Your job is to answer natural language questions about patient data by generatin
 - If the question cannot be answered from the available tables, say so clearly
 
 ## Available tables:
-patients, admissions, diagnoses_icd
+{json.dumps(table_names)}
 """)
 
 llm_with_tools = llm.bind_tools(TOOLS, tool_choice="auto")
