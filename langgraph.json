@@ -1,0 +1,7 @@
+{
+    "dependencies": ["."],
+    "graphs": {
+      "medquery": "./db_query_agent.py:graph"
+    },
+    "env": "./.env"
+}
