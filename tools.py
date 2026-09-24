@@ -6,8 +6,13 @@ import os
 from sentence_transformers import SentenceTransformer
 from pinecone import Pinecone
 from functools import lru_cache
+from guardrails import run_sql_guards, scrub_results,check_row_count
+from guardrails.exceptions import GuardrailError
+import logging
 
-DB_PATH = os.path.join("data", "mimic.db")
+logger = logging.getLogger(__name__)
+
+DB_PATH = os.path.join("data", "mimic_hosp.db")
 INDEX_NAME = "medquery-schema"
 EMBED_MODEL_NAME = "all-MiniLM-L6-v2"
 
@@ -37,26 +42,41 @@ def execute_sql(query: str) -> str:
     Returns columns, row count, and up to 20 rows of results.
     Always call get_schema first to ensure correct column names.
     """
-    if not is_safe_query(query):
-        return "Error: Only SELECT queries are permitted."
-    
-    if "limit" not in query.lower():
-        query = query.rstrip(";") + " LIMIT 100;"
+    # SQL guardrail
+    try:
+        query = run_sql_guards(query)
+    except GuardrailError as e:
+        return f"Query blocked by safety guardrail: {e.message}"
+
     conn = sqlite3.connect(DB_PATH)
     try:
         df = pd.read_sql_query(query, conn)
-        
+
         if df.empty:
-            return json.dumps({"row_count": 0, "message": "No results returned. The query may be too restrictive or reference wrong values."})
-        
+            return json.dumps({
+                "row_count": 0,
+                "message": "No results returned. The query may be too restrictive."
+            })
+        try:
+            check_row_count(df.to_dict(orient="records"))
+        except GuardrailError as e:
+            return f"Query blocked by safety guardrail: {e.message}"
+
+        raw_records = df.head(20).to_dict(orient="records")
+        safe_records = scrub_results(raw_records)   # output guard
+        logger.info(json.dumps({
+            "event": "sql_executed",
+            "query": query,
+            "row_count": len(df)
+        }))
         return json.dumps({
             "row_count": len(df),
             "columns": list(df.columns),
-            "data": df.head(20).to_dict(orient="records")
+            "data": safe_records
         }, indent=2, default=str)
-    
+
     except Exception as e:
-        return f"SQL Error: {str(e)}\nCheck column names using get_schema and try again."
+        return f"SQL Error: {str(e)}"
     finally:
         conn.close()
 def load_schemas(path='schemas.json'):
