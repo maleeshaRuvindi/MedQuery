@@ -233,4 +233,3 @@ ALL_TABLES: list[TableSchema] = [
 ]
 
 TABLES_BY_NAME: dict[str, TableSchema] = {t.name: t for t in ALL_TABLES}
-print(PATIENTS)
