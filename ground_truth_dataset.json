@@ -1,0 +1,704 @@
+[
+  {
+    "question": "How many unique patients are in the database?",
+    "expected_sql": "\n    SELECT COUNT(DISTINCT subject_id) AS total_patients\n    FROM patients;\n    ",
+    "sql_result": [
+      [
+        100
+      ]
+    ]
+  },
+  {
+    "question": "What is the gender distribution of patients?",
+    "expected_sql": "\n    SELECT gender,\n           COUNT(*) AS count,\n           ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER(), 2) AS percentage\n    FROM patients\n    GROUP BY gender;\n    ",
+    "sql_result": [
+      [
+        "F",
+        43,
+        43.0
+      ],
+      [
+        "M",
+        57,
+        57.0
+      ]
+    ]
+  },
+  {
+    "question": "How many admissions occurred by admission type?",
+    "expected_sql": "\n    SELECT admission_type,\n           COUNT(*) AS admission_count\n    FROM admissions\n    GROUP BY admission_type\n    ORDER BY admission_count DESC;\n    ",
+    "sql_result": [
+      [
+        "EW EMER.",
+        104
+      ],
+      [
+        "OBSERVATION ADMIT",
+        45
+      ],
+      [
+        "URGENT",
+        38
+      ],
+      [
+        "EU OBSERVATION",
+        30
+      ],
+      [
+        "SURGICAL SAME DAY ADMISSION",
+        18
+      ],
+      [
+        "DIRECT EMER.",
+        15
+      ],
+      [
+        "ELECTIVE",
+        13
+      ],
+      [
+        "DIRECT OBSERVATION",
+        7
+      ],
+      [
+        "AMBULATORY OBSERVATION",
+        5
+      ]
+    ]
+  },
+  {
+    "question": "How many patients died in the hospital?",
+    "expected_sql": "\n    SELECT COUNT(DISTINCT subject_id) AS in_hospital_deaths\n    FROM admissions\n    WHERE hospital_expire_flag = 1;\n    ",
+    "sql_result": [
+      [
+        15
+      ]
+    ]
+  },
+  {
+    "question": "What is the average length of hospital stay in days?",
+    "expected_sql": "\n    SELECT ROUND(\n               AVG(EXTRACT(EPOCH FROM (dischtime - admittime)) / 86400)::numeric,\n               2\n           ) AS avg_los_days\n    FROM admissions\n    WHERE admittime IS NOT NULL\n      AND dischtime IS NOT NULL;\n    ",
+    "sql_result": "near \"FROM\": syntax error"
+  },
+  {
+    "question": "What are the top 5 most prescribed medications?",
+    "expected_sql": "\n    SELECT drug,\n           COUNT(*) AS prescription_count\n    FROM prescriptions\n    WHERE drug IS NOT NULL\n    GROUP BY drug\n    ORDER BY prescription_count DESC\n    LIMIT 5;\n    ",
+    "sql_result": [
+      [
+        "Insulin",
+        915
+      ],
+      [
+        "0.9% Sodium Chloride",
+        810
+      ],
+      [
+        "Potassium Chloride",
+        610
+      ],
+      [
+        "Sodium Chloride 0.9%  Flush",
+        585
+      ],
+      [
+        "Furosemide",
+        510
+      ]
+    ]
+  },
+  {
+    "question": "What is the patient distribution across care units?",
+    "expected_sql": "\n    SELECT careunit,\n           COUNT(DISTINCT subject_id) AS patient_count\n    FROM transfers\n    WHERE careunit IS NOT NULL\n    GROUP BY careunit\n    ORDER BY patient_count DESC;\n    ",
+    "sql_result": [
+      [
+        "Emergency Department",
+        68
+      ],
+      [
+        "Medicine",
+        31
+      ],
+      [
+        "Discharge Lounge",
+        31
+      ],
+      [
+        "Surgical Intensive Care Unit (SICU)",
+        27
+      ],
+      [
+        "Medical Intensive Care Unit (MICU)",
+        26
+      ],
+      [
+        "Cardiac Vascular Intensive Care Unit (CVICU)",
+        25
+      ],
+      [
+        "PACU",
+        22
+      ],
+      [
+        "Neurology",
+        22
+      ],
+      [
+        "Cardiac Surgery",
+        22
+      ],
+      [
+        "Medical/Surgical Intensive Care Unit (MICU/SICU)",
+        19
+      ],
+      [
+        "Med/Surg",
+        19
+      ],
+      [
+        "Medicine/Cardiology",
+        17
+      ],
+      [
+        "Trauma SICU (TSICU)",
+        15
+      ],
+      [
+        "Emergency Department Observation",
+        15
+      ],
+      [
+        "Coronary Care Unit (CCU)",
+        13
+      ],
+      [
+        "Transplant",
+        11
+      ],
+      [
+        "Med/Surg/Trauma",
+        11
+      ],
+      [
+        "Vascular",
+        8
+      ],
+      [
+        "Med/Surg/GYN",
+        8
+      ],
+      [
+        "Hematology/Oncology",
+        8
+      ],
+      [
+        "Neuro Surgical Intensive Care Unit (Neuro SICU)",
+        3
+      ],
+      [
+        "Surgery/Trauma",
+        2
+      ],
+      [
+        "Observation",
+        2
+      ],
+      [
+        "Neuro Stepdown",
+        2
+      ],
+      [
+        "Hematology/Oncology Intermediate",
+        2
+      ],
+      [
+        "Unknown",
+        1
+      ],
+      [
+        "Psychiatry",
+        1
+      ],
+      [
+        "Neuro Intermediate",
+        1
+      ],
+      [
+        "Medicine/Cardiology Intermediate",
+        1
+      ],
+      [
+        "Cardiology Surgery Intermediate",
+        1
+      ],
+      [
+        "Cardiology",
+        1
+      ]
+    ]
+  },
+  {
+    "question": "What is the distribution of patients by insurance type?",
+    "expected_sql": "\n    SELECT insurance,\n           COUNT(DISTINCT subject_id) AS patient_count\n    FROM admissions\n    GROUP BY insurance\n    ORDER BY patient_count DESC;\n    ",
+    "sql_result": [
+      [
+        "Other",
+        57
+      ],
+      [
+        "Medicare",
+        38
+      ],
+      [
+        "Medicaid",
+        10
+      ]
+    ]
+  },
+  {
+    "question": "What are the top 10 most common diagnoses?",
+    "expected_sql": "\n    SELECT d.long_title,\n           COUNT(*) AS diagnosis_count\n    FROM diagnoses_icd di\n    JOIN d_icd_diagnoses d\n        ON di.icd_code    = d.icd_code\n       AND di.icd_version = d.icd_version\n    GROUP BY d.long_title\n    ORDER BY diagnosis_count DESC\n    LIMIT 10;\n    ",
+    "sql_result": [
+      [
+        "Unspecified essential hypertension",
+        68
+      ],
+      [
+        "Hyperlipidemia, unspecified",
+        57
+      ],
+      [
+        "Acute kidney failure, unspecified",
+        56
+      ],
+      [
+        "Other and unspecified hyperlipidemia",
+        55
+      ],
+      [
+        "Hypothyroidism, unspecified",
+        47
+      ],
+      [
+        "Obesity, unspecified",
+        43
+      ],
+      [
+        "Anemia, unspecified",
+        41
+      ],
+      [
+        "Long term (current) use of insulin",
+        37
+      ],
+      [
+        "Urinary tract infection, site not specified",
+        36
+      ],
+      [
+        "Personal history of nicotine dependence",
+        35
+      ]
+    ]
+  },
+  {
+    "question": "List all patients diagnosed with sepsis (ICD-10: A41.9)",
+    "expected_sql": "\n    SELECT p.subject_id,\n           a.hadm_id,\n           a.admittime,\n           a.dischtime,\n           p.gender,\n           p.anchor_age\n    FROM patients p\n    JOIN admissions    a  ON p.subject_id = a.subject_id\n    JOIN diagnoses_icd di ON a.hadm_id    = di.hadm_id\n    WHERE di.icd_code    = 'A419'\n      AND di.icd_version = 10\n    ORDER BY a.admittime;\n    ",
+    "sql_result": [
+      [
+        10035631,
+        29276678,
+        "2116-02-27 20:55:00",
+        "2116-03-12 07:45:00",
+        "M",
+        63
+      ],
+      [
+        10037861,
+        24540843,
+        "2117-03-14 16:34:00",
+        "2117-03-24 00:01:00",
+        "M",
+        77
+      ],
+      [
+        10003400,
+        23559586,
+        "2137-08-04 00:07:00",
+        "2137-09-02 17:05:00",
+        "F",
+        72
+      ],
+      [
+        10019003,
+        29279905,
+        "2153-03-27 23:25:00",
+        "2153-04-07 16:20:00",
+        "F",
+        65
+      ],
+      [
+        10019003,
+        27525946,
+        "2153-04-12 19:07:00",
+        "2153-04-20 17:09:00",
+        "F",
+        65
+      ],
+      [
+        10020786,
+        23488445,
+        "2189-06-09 12:45:00",
+        "2189-06-13 17:20:00",
+        "F",
+        86
+      ],
+      [
+        10015860,
+        24698912,
+        "2192-05-12 07:42:00",
+        "2192-05-27 18:50:00",
+        "M",
+        53
+      ]
+    ]
+  },
+  {
+    "question": "What is the average age at admission grouped by gender?",
+    "expected_sql": "\n    SELECT p.gender,\n           ROUND(AVG(p.anchor_age), 1) AS avg_anchor_age\n    FROM patients p\n    GROUP BY p.gender;\n    ",
+    "sql_result": [
+      [
+        "F",
+        60.8
+      ],
+      [
+        "M",
+        62.5
+      ]
+    ]
+  },
+  {
+    "question": "What is the average number of lab tests per admission?",
+    "expected_sql": "\n    SELECT ROUND(AVG(lab_count)::numeric, 2) AS avg_labs_per_admission\n    FROM (\n        SELECT hadm_id, COUNT(*) AS lab_count\n        FROM labevents\n        WHERE hadm_id IS NOT NULL\n        GROUP BY hadm_id\n    ) sub;\n    ",
+    "sql_result": "unrecognized token: \":\""
+  },
+  {
+    "question": "What are the top 10 most common organisms in microbiology cultures?",
+    "expected_sql": "\n    SELECT org_name,\n           COUNT(*) AS culture_count\n    FROM microbiologyevents\n    WHERE org_name IS NOT NULL\n    GROUP BY org_name\n    ORDER BY culture_count DESC\n    LIMIT 10;\n    ",
+    "sql_result": [
+      [
+        "ESCHERICHIA COLI",
+        296
+      ],
+      [
+        "STAPH AUREUS COAG +",
+        185
+      ],
+      [
+        "KLEBSIELLA PNEUMONIAE",
+        142
+      ],
+      [
+        "PSEUDOMONAS AERUGINOSA",
+        102
+      ],
+      [
+        "ENTEROCOCCUS SP.",
+        56
+      ],
+      [
+        "YEAST",
+        54
+      ],
+      [
+        "CITROBACTER FREUNDII COMPLEX",
+        38
+      ],
+      [
+        "PROTEUS MIRABILIS",
+        35
+      ],
+      [
+        "STREPTOCOCCUS ANGINOSUS (MILLERI) GROUP",
+        32
+      ],
+      [
+        "VIRIDANS STREPTOCOCCI",
+        23
+      ]
+    ]
+  },
+  {
+    "question": "What are the top 10 most common procedures performed?",
+    "expected_sql": "\n    SELECT d.long_title,\n           COUNT(*) AS procedure_count\n    FROM procedures_icd pi\n    JOIN d_icd_procedures d\n        ON pi.icd_code    = d.icd_code\n       AND pi.icd_version = d.icd_version\n    GROUP BY d.long_title\n    ORDER BY procedure_count DESC\n    LIMIT 10;\n    ",
+    "sql_result": [
+      [
+        "Insertion of Infusion Device into Superior Vena Cava, Percutaneous Approach",
+        23
+      ],
+      [
+        "Central venous catheter placement with guidance",
+        22
+      ],
+      [
+        "Enteral infusion of concentrated nutritional substances",
+        18
+      ],
+      [
+        "Continuous invasive mechanical ventilation for less than 96 consecutive hours",
+        15
+      ],
+      [
+        "Venous catheterization, not elsewhere classified",
+        13
+      ],
+      [
+        "Extracorporeal circulation auxiliary to open heart surgery",
+        13
+      ],
+      [
+        "Percutaneous abdominal drainage",
+        12
+      ],
+      [
+        "Insertion of endotracheal tube",
+        11
+      ],
+      [
+        "Introduction of Nutritional Substance into Upper GI, Via Natural or Artificial Opening",
+        10
+      ],
+      [
+        "Insertion of Endotracheal Airway into Trachea, Via Natural or Artificial Opening",
+        10
+      ]
+    ]
+  },
+  {
+    "question": "What are the most common abnormal lab results?",
+    "expected_sql": "\n    SELECT dl.label,\n           COUNT(*) AS abnormal_count\n    FROM labevents le\n    JOIN d_labitems dl ON le.itemid = dl.itemid\n    WHERE le.flag = 'abnormal'\n    GROUP BY dl.label\n    ORDER BY abnormal_count DESC\n    LIMIT 10;\n    ",
+    "sql_result": [
+      [
+        "Hemoglobin",
+        2517
+      ],
+      [
+        "Hematocrit",
+        2426
+      ],
+      [
+        "Red Blood Cells",
+        2397
+      ],
+      [
+        "Glucose",
+        2307
+      ],
+      [
+        "Urea Nitrogen",
+        1466
+      ],
+      [
+        "White Blood Cells",
+        1398
+      ],
+      [
+        "RDW",
+        1284
+      ],
+      [
+        "Creatinine",
+        1277
+      ],
+      [
+        "Platelet Count",
+        1257
+      ],
+      [
+        "RDW-SD",
+        1158
+      ]
+    ]
+  },
+  {
+    "question": "What is the average length of stay broken down by admission type?",
+    "expected_sql": "\n    SELECT admission_type,\n           ROUND(\n               AVG(EXTRACT(EPOCH FROM (dischtime - admittime)) / 86400)::numeric,\n               2\n           ) AS avg_los_days\n    FROM admissions\n    WHERE admittime IS NOT NULL\n      AND dischtime IS NOT NULL\n    GROUP BY admission_type\n    ORDER BY avg_los_days DESC;\n    ",
+    "sql_result": "near \"FROM\": syntax error"
+  },
+  {
+    "question": "How many unique medications were prescribed to patients with a diabetes diagnosis?",
+    "expected_sql": "\n    SELECT COUNT(DISTINCT pr.drug) AS unique_medications\n    FROM prescriptions pr\n    WHERE pr.hadm_id IN (\n        SELECT DISTINCT di.hadm_id\n        FROM diagnoses_icd di\n        JOIN d_icd_diagnoses d\n            ON di.icd_code    = d.icd_code\n           AND di.icd_version = d.icd_version\n        WHERE d.long_title ILIKE '%diabetes%'\n    );\n    ",
+    "sql_result": "near \"ILIKE\": syntax error"
+  },
+  {
+    "question": "Who are the top 10 patients with the most hospital admissions?",
+    "expected_sql": "\n    SELECT subject_id,\n           COUNT(*) AS admission_count\n    FROM admissions\n    GROUP BY subject_id\n    ORDER BY admission_count DESC\n    LIMIT 10;\n    ",
+    "sql_result": [
+      [
+        10014354,
+        20
+      ],
+      [
+        10015860,
+        13
+      ],
+      [
+        10002930,
+        12
+      ],
+      [
+        10040025,
+        10
+      ],
+      [
+        10039708,
+        10
+      ],
+      [
+        10037928,
+        10
+      ],
+      [
+        10035631,
+        9
+      ],
+      [
+        10019003,
+        8
+      ],
+      [
+        10023117,
+        7
+      ],
+      [
+        10005866,
+        7
+      ]
+    ]
+  },
+  {
+    "question": "What percentage of patients had more than one admission?",
+    "expected_sql": "\n    WITH admission_counts AS (\n        SELECT subject_id,\n               COUNT(*) AS num_admissions\n        FROM admissions\n        GROUP BY subject_id\n    )\n    SELECT\n        COUNT(*) AS total_patients,\n        COUNT(CASE WHEN num_admissions > 1 THEN 1 END) AS readmitted_patients,\n        ROUND(\n            100.0 * COUNT(CASE WHEN num_admissions > 1 THEN 1 END) / COUNT(*),\n            2\n        ) AS readmission_rate_pct\n    FROM admission_counts;\n    ",
+    "sql_result": [
+      [
+        100,
+        48,
+        48.0
+      ]
+    ]
+  },
+  {
+    "question": "What percentage of admissions included an ICU stay?",
+    "expected_sql": "\n    SELECT\n        ROUND(\n            100.0 * COUNT(DISTINCT icu.hadm_id) / COUNT(DISTINCT a.hadm_id),\n            2\n        ) AS icu_admission_pct\n    FROM admissions a\n    LEFT JOIN (\n        SELECT DISTINCT hadm_id\n        FROM transfers\n        WHERE careunit ILIKE '%ICU%'\n    ) icu ON a.hadm_id = icu.hadm_id;\n    ",
+    "sql_result": "near \"ILIKE\": syntax error"
+  },
+  {
+    "question": "What is the average number of diagnoses per admission for patients who died vs. survived?",
+    "expected_sql": "\n    SELECT\n        CASE WHEN a.hospital_expire_flag = 1 THEN 'Died' ELSE 'Survived' END AS outcome,\n        ROUND(AVG(diag_count)::numeric, 2) AS avg_diagnoses\n    FROM admissions a\n    JOIN (\n        SELECT hadm_id, COUNT(*) AS diag_count\n        FROM diagnoses_icd\n        GROUP BY hadm_id\n    ) d ON a.hadm_id = d.hadm_id\n    GROUP BY a.hospital_expire_flag;\n    ",
+    "sql_result": "unrecognized token: \":\""
+  },
+  {
+    "question": "Find patients who had both sepsis and pneumonia during the same admission.",
+    "expected_sql": "\n    SELECT DISTINCT di1.subject_id, di1.hadm_id\n    FROM diagnoses_icd   di1\n    JOIN d_icd_diagnoses  d1 ON di1.icd_code = d1.icd_code AND di1.icd_version = d1.icd_version\n    JOIN diagnoses_icd   di2 ON di1.hadm_id  = di2.hadm_id\n    JOIN d_icd_diagnoses  d2 ON di2.icd_code = d2.icd_code AND di2.icd_version = d2.icd_version\n    WHERE d1.long_title ILIKE '%sepsis%'\n      AND d2.long_title ILIKE '%pneumonia%';\n    ",
+    "sql_result": "near \"ILIKE\": syntax error"
+  },
+  {
+    "question": "Find patients readmitted within 30 days of discharge.",
+    "expected_sql": "\n    SELECT DISTINCT\n        a1.subject_id,\n        a1.hadm_id     AS index_hadm_id,\n        a1.dischtime   AS index_discharge,\n        a2.hadm_id     AS readmit_hadm_id,\n        a2.admittime   AS readmit_time,\n        ROUND(\n            EXTRACT(EPOCH FROM (a2.admittime - a1.dischtime)) / 86400,\n            1\n        ) AS days_to_readmission\n    FROM admissions a1\n    JOIN admissions a2\n        ON  a1.subject_id = a2.subject_id\n        AND a1.hadm_id   <> a2.hadm_id\n        AND a2.admittime  > a1.dischtime\n        AND a2.admittime - a1.dischtime <= INTERVAL '30 days'\n    ORDER BY a1.subject_id, a1.dischtime;\n    ",
+    "sql_result": "near \"FROM\": syntax error"
+  },
+  {
+    "question": "What is the in-hospital mortality rate by race?",
+    "expected_sql": "\n    SELECT\n        race,\n        COUNT(*) AS total_admissions,\n        SUM(hospital_expire_flag) AS deaths,\n        ROUND(100.0 * SUM(hospital_expire_flag) / COUNT(*), 2) AS mortality_rate_pct\n    FROM admissions\n    GROUP BY race\n    ORDER BY mortality_rate_pct DESC;\n    ",
+    "sql_result": [
+      [
+        "PATIENT DECLINED TO ANSWER",
+        2,
+        1,
+        50.0
+      ],
+      [
+        "UNKNOWN",
+        17,
+        4,
+        23.53
+      ],
+      [
+        "WHITE",
+        170,
+        9,
+        5.29
+      ],
+      [
+        "BLACK/AFRICAN AMERICAN",
+        48,
+        1,
+        2.08
+      ],
+      [
+        "WHITE - OTHER EUROPEAN",
+        2,
+        0,
+        0.0
+      ],
+      [
+        "WHITE - BRAZILIAN",
+        3,
+        0,
+        0.0
+      ],
+      [
+        "UNABLE TO OBTAIN",
+        4,
+        0,
+        0.0
+      ],
+      [
+        "PORTUGUESE",
+        7,
+        0,
+        0.0
+      ],
+      [
+        "OTHER",
+        4,
+        0,
+        0.0
+      ],
+      [
+        "HISPANIC/LATINO - SALVADORAN",
+        3,
+        0,
+        0.0
+      ],
+      [
+        "HISPANIC/LATINO - PUERTO RICAN",
+        1,
+        0,
+        0.0
+      ],
+      [
+        "HISPANIC/LATINO - CUBAN",
+        9,
+        0,
+        0.0
+      ],
+      [
+        "HISPANIC OR LATINO",
+        2,
+        0,
+        0.0
+      ],
+      [
+        "BLACK/CAPE VERDEAN",
+        3,
+        0,
+        0.0
+      ]
+    ]
+  },
+  {
+    "question": "Which diagnoses have the highest in-hospital mortality rate? (minimum 100 cases)",
+    "expected_sql": "\n    SELECT\n        d.long_title,\n        COUNT(*) AS total_admissions,\n        SUM(a.hospital_expire_flag) AS deaths,\n        ROUND(100.0 * SUM(a.hospital_expire_flag) / COUNT(*), 2) AS mortality_rate_pct\n    FROM diagnoses_icd   di\n    JOIN d_icd_diagnoses  d ON di.icd_code    = d.icd_code\n                            AND di.icd_version = d.icd_version\n    JOIN admissions       a ON di.hadm_id     = a.hadm_id\n    WHERE di.seq_num = 1\n    GROUP BY d.long_title\n    HAVING COUNT(*) >= 100\n    ORDER BY mortality_rate_pct DESC\n    LIMIT 10;\n    ",
+    "sql_result": []
+  }
+]
