@@ -1,9 +1,4 @@
----
-title: MedQuery
-emoji: 🏥
-colorFrom: blue
-colorTo: green
-sdk: docker
-app_port: 7860
-pinned: false
----
+# MedQuery
+
+An agentic Text-to-SQL system that answers natural-language
+questions over the MIMIC-IV clinical database.
