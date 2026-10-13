@@ -1,0 +1,15 @@
+.git
+**/__pycache__
+**/*.pyc
+venv/
+.venv/
+.venv_ragas/
+.env
+*.ipynb
+*.png
+scripts/
+.gitignore
+track_imports.py
+test.py
+lambda_handler.py
+langgraph.json

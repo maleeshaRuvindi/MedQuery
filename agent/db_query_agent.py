@@ -6,7 +6,7 @@ from langgraph.graph.message import add_messages
 from langchain.chat_models import init_chat_model
 from langchain_core.tools import tool
 from langchain_core.messages import AIMessage, SystemMessage
-from tools import TOOLS
+from agent.tools import TOOLS
 from langgraph.prebuilt import ToolNode,tools_condition
 import os
 import json
@@ -73,7 +73,7 @@ graph = builder.compile()
 #         print("  tool_calls:", msg.tool_calls)
 #     if hasattr(msg, 'tool_call_id'):
 #         print("  tool_call_id:", msg.tool_call_id)
-def run_medquery(user_question: str,config: dict = None) -> str:
+async def run_medquery(user_question: str,config: dict = None) -> str:
     # Layer 1 — input guard
     try:
         run_input_guards(user_question)
@@ -82,7 +82,7 @@ def run_medquery(user_question: str,config: dict = None) -> str:
         return e.message
 
     # Run graph
-    response = graph.invoke({
+    response = await graph.ainvoke({
         "messages": [SYSTEM_PROMPT, {"role": "user", "content": user_question}]
     },config={"recursion_limit": 15, **(config or {})},)
 
