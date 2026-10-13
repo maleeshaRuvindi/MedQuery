@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 load_dotenv()
 from langsmith import evaluate, Client
 from pydantic import BaseModel
-from db_query_agent import run_medquery
+from agent.db_query_agent import run_medquery
 # 1. Create and/or select your dataset
 client = Client()
 dataset_name = "golden_dataset"
