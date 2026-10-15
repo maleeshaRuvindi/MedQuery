@@ -1,3 +1,4 @@
+from pathlib import Path
 import sqlite3
 import pandas as pd
 import json
@@ -47,7 +48,11 @@ def execute_sql(query: str) -> str:
     except GuardrailError as e:
         return f"Query blocked by safety guardrail: {e.message}"
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(
+    f"file:{Path(DB_PATH).resolve().as_posix()}?mode=ro",
+    uri=True,
+)
+    conn.execute("PRAGMA query_only = ON")
     try:
         df = pd.read_sql_query(query, conn)
 
