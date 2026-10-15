@@ -17,8 +17,14 @@ import logging
 logger = logging.getLogger(__name__)
 load_dotenv()
 class State(TypedDict):
-    messages: Annotated[list,add_messages]
-llm = llm = init_chat_model("gpt-5.6-luna", model_provider="openai",reasoning_effort="none")
+    messages: Annotated[list,add_messages] 
+llm = init_chat_model(
+    "gpt-5.6-luna",
+    model_provider="openai",
+    reasoning_effort="none",
+    timeout=30,
+    max_retries=2,
+)
 DB_PATH = os.path.join("data", "mimic_hosp.db")
 
 table_names=['admissions', 'diagnoses_icd', 'drgcodes', 'd_hcpcs', 'd_icd_diagnoses', 'd_icd_procedures', 'd_labitems', 'emar', 'emar_detail', 'hcpcsevents', 'labevents', 'microbiologyevents', 'omr', 'patients', 'pharmacy', 'poe', 'poe_detail', 'prescriptions', 'procedures_icd', 'provider', 'services', 'transfers']
